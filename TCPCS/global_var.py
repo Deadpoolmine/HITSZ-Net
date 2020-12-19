@@ -1,0 +1,2 @@
+OP_LEN = 42
+READ_CHUNK = 1024

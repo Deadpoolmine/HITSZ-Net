@@ -1,0 +1,9 @@
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/edit_cache.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/ctest_eth_in.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/rebuild_cache.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/ctest_eth_out.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/ctest_arp.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/ctest_ip.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/ctest_ip_frag.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/ctest_icmp.dir
+/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/build/CMakeFiles/main.dir

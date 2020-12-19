@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/eel.js"></script>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/popup.css">
+    <script type="text/javascript" src="js/modernizr.js"></script>
+</head>
+<body>
+    <section class="cd-section">
+       <div class="cd-modal-action">
+           <video autoplay muted loop class="video-container">
+                <source src="../../bg.mp4 type="video/mp4">
+           </video>
+           <div class="mask"></div>
+            <div class="container">
+                <div class="card" >
+                    <div class="card-header">
+                        上传文件
+                    </div>
+                    <div class="card-body">
+                        <a href="#0" class="btn" onclick="upload()" id="upload_btn">点击这里上传文件</a>
+                        <input type="file" hidden id="file_picker"/>
+                    </div>
+            </div>
+            <div class="card" onclick="download()">
+                <div class="card-header">
+                    下载文件
+                </div>
+                <div class="card-body">
+                    <a href="#0" class="btn" data-type="modal-trigger">点击这里下载文件</a>
+                    <span class="cd-modal-bg"></span>
+                </div>
+                </div>
+            </div>
+       </div>
+
+       <div class="cd-modal">
+          <div class="cd-modal-content">
+             <div id="file_list">
+                 <ul>
+
+                 </ul>
+             </div>
+          </div>
+       </div>
+
+       <a href="#0" class="cd-modal-close">Close</a>
+    </section>
+
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/velocity.min.js"></script>
+    <script src="js/main.js"></script> <!-- Resource jQuery -->
+    <script type="text/javascript" src="js/index.js"></script>
+
+</body>
+</html>
