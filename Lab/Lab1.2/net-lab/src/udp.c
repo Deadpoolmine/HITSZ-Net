@@ -113,19 +113,20 @@ void udp_in(buf_t *buf, uint8_t *src_ip)
     }
     if(!is_find){
         /* 为了调用icmp_unreachable，我们应该加入ip头部，可以将icmp视作介于网络层和传输层的一层协议 */
+        /** 事实上,ip头部就在udp前  */
         buf_add_header(buf, sizeof(ip_hdr_t));
-        ip_hdr_t* ip_header = (ip_hdr_t *) buf->data;
-        ip_header->version = IP_VERSION_4;
-        ip_header->hdr_len = 20 / IP_HDR_LEN_PER_BYTE; 
-        ip_header->tos = 0;
-        ip_header->total_len = swap16(buf->len);
-        ip_header->id = 0;
-        ip_header->flags_fragment = 0;
-        ip_header->ttl = IP_DEFALUT_TTL;
-        ip_header->protocol = NET_PROTOCOL_UDP;
-        ip_header->hdr_checksum = 0;
-        memcpy(ip_header->src_ip, net_if_ip, NET_IP_LEN);
-        memcpy(ip_header->dest_ip, src_ip, NET_IP_LEN);
+        // ip_hdr_t* ip_header = (ip_hdr_t *) buf->data;
+        // ip_header->version = IP_VERSION_4;
+        // ip_header->hdr_len = 20 / IP_HDR_LEN_PER_BYTE; 
+        // ip_header->tos = 0;
+        // ip_header->total_len = swap16(buf->len);
+        // ip_header->id = 0;
+        // ip_header->flags_fragment = 0;
+        // ip_header->ttl = IP_DEFALUT_TTL;
+        // ip_header->protocol = NET_PROTOCOL_UDP;
+        // ip_header->hdr_checksum = 0;
+        // memcpy(ip_header->src_ip, net_if_ip, NET_IP_LEN);
+        // memcpy(ip_header->dest_ip, src_ip, NET_IP_LEN);
         icmp_unreachable(buf, src_ip, ICMP_CODE_PORT_UNREACH);
     }
     
