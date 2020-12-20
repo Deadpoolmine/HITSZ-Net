@@ -19,16 +19,18 @@ void ethernet_in(buf_t *buf)
     // TODO
     ether_hdr_t *ether_header = (ether_hdr_t *)buf->data;
     uint16_t protocol = swap16(ether_header->protocol);
-    printf("%d , %x\n", protocol, protocol);
+    //printf("%d , %x\n", protocol, protocol);
     switch (protocol)
     {
     case NET_PROTOCOL_IP:
         buf_remove_header(buf, sizeof(ether_hdr_t));
+        printf("收到一个IPv4包\n");
         ip_in(buf);
         break;
     case NET_PROTOCOL_ARP:
         buf_remove_header(buf, sizeof(ether_hdr_t));
         arp_in(buf);
+        printf("收到一个ARP包\n");
         break;
     default:
         break;

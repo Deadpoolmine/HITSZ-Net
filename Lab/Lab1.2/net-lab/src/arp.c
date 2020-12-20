@@ -5,7 +5,7 @@
 #include "config.h"
 #include <string.h>
 #include <stdio.h>
-
+#define ARP_BUF_QUEUE_SZ 10
 /**
  * @brief 初始的arp包
  * 
@@ -31,6 +31,9 @@ arp_entry_t arp_table[ARP_MAX_ENTRY];
  * 
  */
 arp_buf_t arp_buf;
+
+/* 构造一个arp_buf队列，这样就可以多缓存，多发送 */
+arp_buf_t arp_buf_queue[ARP_BUF_QUEUE_SZ];
 
 /**
  * @brief 更新arp表
@@ -168,22 +171,38 @@ void arp_in(buf_t *buf)
     }
     /* 更新arp表 */
     arp_update(arp_pkt->sender_ip, arp_pkt->sender_mac, ARP_VALID);
+    /** 助教测试的时候把Part 1取消注释，Part 2重新注释，即最原来的版本（发一次收不到）  */
+    /** Part 1 ------------------------------------ */
     /* 查看是否有上次没发送的数据包 */
-    if(arp_buf.valid){
-        uint8_t* target_mac = arp_lookup(arp_buf.ip);
-        if (arp_buf.protocol == NET_PROTOCOL_IP)
-        {
-            ip_hdr_t* ip_header = (ip_hdr_t*)arp_buf.buf.data;
-            printf("ip_header type is UDP? %d", ip_header->protocol == NET_PROTOCOL_UDP);
-        }
-        printf("ip_header type is UDP? %x", arp_buf.protocol);
-        if(target_mac){
-            ethernet_out(&arp_buf.buf, target_mac, arp_buf.protocol);
-            arp_buf.valid = 0;  //已经发送了数据包，故无效了
+    // if(arp_buf.valid){
+    //     uint8_t* target_mac = arp_lookup(arp_buf.ip);
+    //     if(target_mac){
+    //         printf("发送缓存buf\n");
+    //         for (int i = 0; i < arp_buf.buf.len; i++)
+    //         {
+    //             printf("%x ", arp_buf.buf.data[i]);
+    //         }
+            
+    //         ethernet_out(&arp_buf.buf, target_mac, arp_buf.protocol);
+    //         arp_buf.valid = 0;  //已经发送了数据包，故无效了
+    //     }
+    // }
+    /** Part 2 ------------------------------------ */
+    /** 为了保证一次性收到，我们发送缓存里的所有buf */
+    int is_find = 0;
+    for (int i = 0; i < ARP_BUF_QUEUE_SZ; i++)
+    {
+        if(arp_buf_queue[i].valid){
+            is_find = 1;
+            uint8_t* target_mac = arp_lookup(arp_buf_queue[i].ip);
+            if(target_mac){
+                ethernet_out(&arp_buf_queue[i].buf, target_mac, arp_buf_queue[i].protocol);
+                arp_buf_queue[i].valid = 0;  //已经发送了数据包，故无效了
+            }
         }
     }
     /* 没有 */
-    else
+    if(!is_find) /** 原版这里将if(!is_find)改为else */
     {
         /* 操作类型为request，目标ip为自己，回发响应报文 */
         if(arp_pkt->opcode == swap16(ARP_REQUEST) && 
@@ -235,35 +254,31 @@ void arp_out(buf_t *buf, uint8_t *ip, net_protocol_t protocol)
         arp_req(ip);
         printf("arp_out() arp requset: %s \n", iptos(ip));
         printf("protocol == swap16(NET_PROTOCOL_IP)?: %d\n",protocol == NET_PROTOCOL_IP);
-        if(!arp_buf.valid){
-            /* 拷贝buf */
-            buf_copy(&arp_buf.buf, buf);
-            /* 置当前buf有效 */
-            arp_buf.valid = 1;
-            /* 拷贝ip */
-            memcpy(arp_buf.ip , ip, NET_IP_LEN);
-            /* 拷贝protocol */
-            arp_buf.protocol = protocol;
-        }
-        else
+        /* 拷贝buf */
+        //为什么buf的data没有指向payload？？？？？
+        //原因，调用ip_fragments_out的时候，txbuf.data = buf->data + lambda，
+        //这显然是不对的，txbuf.data不应该指向buf的data
+        
+        /** 助教测试的时候把Part 1取消注释，Part 2重新注释，即最原来的版本（发一次收不到）  */
+        /** Part 1 ------------------------------------ */
+        // buf_copy(&arp_buf.buf, buf);
+        /* 置当前buf有效 */
+        // arp_buf.valid = 1;
+        /* 拷贝ip */
+        // memcpy(arp_buf.ip , ip, NET_IP_LEN);
+        /* 拷贝protocol */
+        // arp_buf.protocol = protocol;
+        
+        /** Part 2 ------------------------------------ */
+        /** 为了保证点击一次就能够Debug工具就能够收到信息，我们只需要把上层的包全部缓存下来 */
+        for (int i = 0; i < ARP_BUF_QUEUE_SZ; i++)
         {
-            /* 如果是来自IP的包 */
-            if(protocol == NET_PROTOCOL_IP){
-                ip_hdr_t *ip_header = (ip_hdr_t*)buf->data;
-                /* 如果IP包封装的是UDP包，则予以替换，保证UDP在buffer中优先级最高 */
-                if(ip_header->protocol == NET_PROTOCOL_UDP){
-                    memset(&arp_buf.buf, 0, BUF_MAX_LEN);
-                    /* 拷贝buf */
-                    buf_copy(&arp_buf.buf, buf);
-                    /* 置当前buf有效 */
-                    arp_buf.valid = 1;
-                    /* 拷贝ip */
-                    memcpy(arp_buf.ip , ip, NET_IP_LEN);
-                    /* 拷贝protocol */
-                    arp_buf.protocol = protocol;
-                    printf("hhh1: %d ,%d\n",ip_header->protocol, ip_header->total_len);
-                    printf("hhh2: %d ,%d\n",((ip_hdr_t*)arp_buf.buf.data)->protocol,((ip_hdr_t*)arp_buf.buf.data)->total_len);
-                }
+            if(!arp_buf_queue[i].valid){
+                buf_copy(&arp_buf_queue[i].buf, buf);
+                arp_buf_queue[i].valid = 1;
+                memcpy(arp_buf_queue[i].ip , ip, NET_IP_LEN);
+                arp_buf_queue[i].protocol = protocol;
+                break;
             }
         }
     }

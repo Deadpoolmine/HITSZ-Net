@@ -28,12 +28,6 @@ net.h
 utils.h
 ../include/utils.h
 
-../include/icmp.h
-stdint.h
--
-utils.h
-../include/utils.h
-
 ../include/ip.h
 stdint.h
 -
@@ -47,12 +41,6 @@ config.h
 ../include/config.h
 stdint.h
 -
-
-../include/udp.h
-stdint.h
--
-utils.h
-../include/utils.h
 
 ../include/utils.h
 stdint.h
@@ -71,20 +59,6 @@ ethernet.h
 /home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/ethernet.h
 config.h
 /home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/config.h
-string.h
--
-stdio.h
--
-
-/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/ip.c
-ip.h
-/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/ip.h
-arp.h
-/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/arp.h
-icmp.h
-/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/icmp.h
-udp.h
-/home/deadpool/Desktop/HITSZ-ComupterNetwork/Lab/Lab1.2/net-lab/src/udp.h
 string.h
 -
 stdio.h

@@ -139,7 +139,9 @@ void ip_out(buf_t *buf, uint8_t *ip, net_protocol_t protocol)
         for (int group = 0; group < groups; group++)
         {
             buf_init(&txbuf, eth_max_pac_len);
-            txbuf.data = buf->data + group * eth_max_pac_len;
+            /** 不能这样乱指  */
+            /** txbuf.data = buf->data + group * eth_max_pac_len; */
+            memcpy(txbuf.data, buf->data + group * eth_max_pac_len, eth_max_pac_len);
             /* 是最后一个整分组 且 没有剩余了，则最后一个整分组就是 最后一个 */
             if(group == groups - 1 && !remain){
                 ip_fragment_out(&txbuf, ip, protocol, id, group * offset_per_group, 0);
@@ -151,7 +153,8 @@ void ip_out(buf_t *buf, uint8_t *ip, net_protocol_t protocol)
         }
         if(remain){
             buf_init(&txbuf, remain);
-            txbuf.data = buf->data + groups * eth_max_pac_len;
+            /*  txbuf.data = buf->data + groups * eth_max_pac_len; */
+            memcpy(txbuf.data, buf->data + groups * eth_max_pac_len, eth_max_pac_len);
             ip_fragment_out(&txbuf, ip, protocol, id, groups * offset_per_group, 0);
         }
     }
