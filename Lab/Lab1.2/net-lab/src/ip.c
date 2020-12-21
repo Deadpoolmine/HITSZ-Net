@@ -154,7 +154,7 @@ void ip_out(buf_t *buf, uint8_t *ip, net_protocol_t protocol)
         if(remain){
             buf_init(&txbuf, remain);
             /*  txbuf.data = buf->data + groups * eth_max_pac_len; */
-            memcpy(txbuf.data, buf->data + groups * eth_max_pac_len, eth_max_pac_len);
+            memcpy(txbuf.data, buf->data + groups * eth_max_pac_len, remain);
             ip_fragment_out(&txbuf, ip, protocol, id, groups * offset_per_group, 0);
         }
     }

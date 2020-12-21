@@ -33,8 +33,8 @@ static uint16_t udp_checksum(buf_t *buf, uint8_t *src_ip, uint8_t *dest_ip)
     // TODO
     buf_add_header(buf, sizeof(udp_peso_hdr_t));
     udp_peso_hdr_t *udp_peso_header = (udp_peso_hdr_t *)buf->data;
-    memcpy(udp_peso_header->dest_ip, src_ip, NET_IP_LEN); 
-    memcpy(udp_peso_header->src_ip, dest_ip, NET_IP_LEN); 
+    memcpy(udp_peso_header->dest_ip, dest_ip, NET_IP_LEN); 
+    memcpy(udp_peso_header->src_ip, src_ip, NET_IP_LEN); 
     udp_peso_header->placeholder = 0;
     udp_peso_header->protocol = NET_PROTOCOL_UDP;
     /* udp 长度 ？ 到底是什么？？？ */
@@ -93,7 +93,7 @@ void udp_in(buf_t *buf, uint8_t *src_ip)
     ip_hdr_t *origin_ip_header = (ip_hdr_t *)(buf->data - sizeof(ip_hdr_t));
     memcpy(cache_ip_header, origin_ip_header, sizeof(ip_hdr_t));
     uint16_t check_sum = udp_checksum(buf, cache_ip_header->src_ip, cache_ip_header->dest_ip);
-    memcpy(buf->data + sizeof(ip_hdr_t), cache_ip_header, sizeof(ip_hdr_t));
+    memcpy(buf->data - sizeof(ip_hdr_t), cache_ip_header, sizeof(ip_hdr_t));
 
     if(check_sum != cache_check_sum){
         printf("udp() check sum error!\n");
